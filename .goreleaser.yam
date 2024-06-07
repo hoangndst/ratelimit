@@ -1,0 +1,14 @@
+nfpms:
+- maintainer: Nguyen Dinh Hoang <hoangndst@gmail.com>
+  description: Golang Rate Limiter
+  homepage: https://github.com/hoangndst/ratelimit
+  license: MIT
+
+release:
+  name_template: "v{{ .Version }}"
+  footer: |
+    **Full Changelog**: https://github.com/goreleaser/goreleaser/compare/{{ .PreviousTag }}...{{ if .IsNightly }}nightly{{ else }}{{ .Tag }}{{ end }}
+
+    This release is only possible thanks to **all** the support of some **awesome people**!
+    <a href="https://goreleaser.com"><img src="https://go.dev/blog/gopher/header.jpg" with="100%" alt="Gopher"></a>
+    {{ end }}
