@@ -1,0 +1,39 @@
+name: 'GolangCI Lint'
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+      - bugfix/*
+      - hotfix/*
+      - release/*
+      - support/*
+      - refactor/*
+      - chore/*
+      - ci/*
+      - docs/*
+      - vendor/*
+      - fix/*
+      - update/*
+  pull_request:
+    branches:
+      - main
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  golangci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.6
+      - name: Install Go
+        uses: actions/setup-go@v5.0.1
+        with:
+          go-version-file: ./go.mod
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.58
