@@ -6,18 +6,26 @@ import (
 	"time"
 )
 
+// TokenBucket is a rate limiter that uses a token bucket algorithm.
+// capacity is the maximum number of tokens that can be stored in the bucket.
+// refillAmount is the number of tokens that are added to the bucket every timeBetweenSlots.
+// timeBetweenSlots is the time in seconds between each slot.
+// maxTimeOut is the maximum time in seconds that a token can be stored in the bucket.
+// rbs is the Redis client used to store the token bucket state.
 type TokenBucket struct {
 	capacity         int
 	refillAmount     int
 	timeBetweenSlots int
+	maxTimeOut       int
 	rbs              drivers.Rediser
 }
 
-func NewTokenBucket(capacity, refillAmount, timeBetweenSlots int, rbs drivers.Rediser) *TokenBucket {
+func NewTokenBucket(capacity, refillAmount, timeBetweenSlots, maxTimeOut int, rbs drivers.Rediser) *TokenBucket {
 	return &TokenBucket{
 		capacity:         capacity,
 		refillAmount:     refillAmount,
 		timeBetweenSlots: timeBetweenSlots,
+		maxTimeOut:       maxTimeOut,
 		rbs:              rbs,
 	}
 }
@@ -49,6 +57,7 @@ func (tb *TokenBucket) RateLimit(ctx context.Context, key string) (float64, erro
 		tb.capacity,
 		tb.refillAmount,
 		tb.timeBetweenSlots,
+		tb.maxTimeOut,
 		seconds,
 		microseconds,
 	}

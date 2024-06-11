@@ -25,8 +25,9 @@ redis.replicate_commands()
 local capacity = tonumber(ARGV[1])
 local refill_amount = tonumber(ARGV[2])
 local time_between_slots = tonumber(ARGV[3]) * 1000 -- Convert to milliseconds
-local seconds = tonumber(ARGV[4])
-local microseconds = tonumber(ARGV[5])
+local max_timeout = tonumber(ARGV[4]) * 1000 -- Convert to milliseconds
+local seconds = tonumber(ARGV[5])
+local microseconds = tonumber(ARGV[6])
 
 -- Keys
 local data_key = KEYS[1]
@@ -51,13 +52,13 @@ if data then
         -- Refill the tokens based on the number of slots passed, capped by capacity
         tokens = math.min(tokens + slots_passed * refill_amount, capacity)
         -- Update the slot to this run, adding a penalty for execution time
-        slot = now + 20
+        slot = now
     end
 end
 
 -- If no tokens are left, move to the next slot and refill accordingly
 if tokens <= 0 then
-    slot = slot + time_between_slots
+	slot = math.min(slot + time_between_slots, now + max_timeout)
     tokens = refill_amount
 end
 
