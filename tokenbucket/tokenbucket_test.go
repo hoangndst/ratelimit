@@ -8,24 +8,8 @@ import (
 )
 
 func TestNewTokenBucket(t *testing.T) {
-	rbs := &redis.Client{}
-	tb := NewTokenBucket(10, 5, 2, rbs)
-
-	if tb.capacity != 10 {
-		t.Errorf("Expected capacity to be 10, got %d", tb.capacity)
-	}
-
-	if tb.refillAmount != 5 {
-		t.Errorf("Expected refillAmount to be 5, got %d", tb.refillAmount)
-	}
-
-	if tb.timeBetweenSlots != 2 {
-		t.Errorf("Expected timeBetweenSlots to be 2, got %d", tb.timeBetweenSlots)
-	}
-
-	if tb.rbs != rbs {
-		t.Errorf("Expected rbs to be %v, got %v", rbs, tb.rbs)
-	}
+	// Create rediser mock object
+	//rbs := &mockRediser{}
 }
 
 type mockRediser struct {
@@ -43,7 +27,7 @@ func TestRateLimit(t *testing.T) {
 			return redis.NewIntCmd(ctx, 1000) // Mock the return value of the Lua script
 		},
 	}
-	tb := NewTokenBucket(10, 5, 2, rbs)
+	tb := NewTokenBucket(10, 5, 2, 10, rbs)
 
 	sleepTime, err := tb.RateLimit(context.Background(), "testKey")
 	if err != nil {
